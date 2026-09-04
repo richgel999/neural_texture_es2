@@ -312,6 +312,19 @@ Described, not yet implemented:
   linear. Also decoder initialization from a previously trained model.
 * **Materials with non-RGB channel counts** (single-channel roughness or AO,
   two-channel normals) and normal-map-aware losses.
+* **Training a material through a BRDF (rendering loss):** put the shading
+  model inside the ES evaluation, latent → decoded normal, albedo, roughness
+  and AO → BRDF under one or more lights and views → rendered image → loss
+  against the same rendering of the original maps. Today each map is fitted
+  with its own pixel MSE and hand-set weights; a rendering loss instead
+  weights every map by how much it changes the shaded result, which is what
+  a game actually sees, and it requires no derivative of the BRDF, the
+  tone mapping, or anything else in the pipeline. With a per-pixel shading
+  model (no shadows or screen-space effects) the loss stays a sum over
+  pixels, so footprint attribution applies unchanged; effects that read
+  neighboring pixels enlarge the footprint and are handled the same way the
+  coarse latent level is. Several lights or views per evaluation just sum
+  more per-pixel terms.
 * **SPSA (Simultaneous Perturbation Stochastic Approximation) and Rademacher
   ES in place of Gaussian ES:** Spall's SPSA perturbs every parameter by a
   random ±1 (Rademacher) step of size `c`, evaluates the two sides
