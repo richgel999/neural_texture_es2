@@ -302,9 +302,14 @@ Described, not yet implemented:
   no two perturbed footprints overlap and neighbor crosstalk vanishes; cycle
   the phase to cover all parameters. (Level alternation above is the
   cross-level analogue and is implemented; the within-level version is not.)
-* **Latent initialization from the image itself** (a downsampled, projected
-  copy of the target) and decoder initialization from a previously trained
-  model, as warm starts for ES training.
+* **Latent initialization from the image itself** as a warm start for ES
+  training: box-downsample the target (all textures of a material) to each
+  latent level's resolution, then project each texel's stacked channel vector
+  (3T values, or a small local patch of them) onto the top `C` principal
+  components of those vectors (PCA), so the initial latent is the best `C`-
+  channel linear summary of the local image content instead of noise. The
+  decoder then starts by learning the inverse projection, which is close to
+  linear. Also decoder initialization from a previously trained model.
 * **Materials with non-RGB channel counts** (single-channel roughness or AO,
   two-channel normals) and normal-map-aware losses.
 * **SPSA (Simultaneous Perturbation Stochastic Approximation) and Rademacher
