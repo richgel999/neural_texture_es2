@@ -292,11 +292,27 @@ Described, not yet implemented:
   latent inside the decode used for every ES evaluation. Because ES only
   observes loss values, any non-differentiable quantizer or codec can sit in
   the loop with no straight-through estimator or differentiable surrogate.
-* **Block-compressed latents (BC1/BC4/BC7/ASTC) in the training loop**, with
-  loss attribution per compressed block rather than per texel.
-* **Search directly in the encoded domain:** drop the float latent and run ES
-  (or stochastic coordinate descent) over block endpoints and indices
-  themselves, so the trainer and the texture compressor are the same program.
+* **Latents stored in standard GPU texture formats, inside the training
+  loop.** The latent texture is ultimately a GPU texture, so it can be held in
+  any format the hardware samples natively: uncompressed fixed-point formats
+  (A8R8G8B8, R8, RG8, 4-bit and 5:6:5 packings, RGBA16), or block-compressed
+  formats (BC1–BC7, BC6H for signed or HDR latents, ASTC LDR and HDR at any
+  block size). Because ES only observes loss values, the format's
+  encode–decode round trip can sit inside every ES evaluation with no
+  straight-through estimator or differentiable surrogate: the trainer sees the
+  latent exactly as the GPU will. For block formats, loss attribution is per
+  block rather than per texel, since one endpoint change moves every texel in
+  the block; for per-texel formats the attribution is unchanged.
+* **Search directly in the encoded representation.** Rather than training a
+  float latent and encoding it, make the encoded texture itself the parameter
+  vector and perturb its stored fields directly: quantized texel values for
+  fixed-point formats, or block endpoints, partition and mode selectors, and
+  per-texel indices for block-compressed formats, using ES with discrete
+  perturbations or stochastic coordinate descent with accept/reject, exactly
+  as a conventional texture encoder searches. There is then no encoder inside
+  the loop at all, only the format's decoder, the bitrate is fixed by the
+  format by construction, and the trainer and the texture compressor are the
+  same program with the MLP inside its distortion metric.
 * **Non-overlapping perturbation phases:** perturb only texels or blocks on
   one phase of a 2×2 grid per evaluation so that, under bilinear sampling,
   no two perturbed footprints overlap and neighbor crosstalk vanishes; cycle
