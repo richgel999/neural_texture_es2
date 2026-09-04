@@ -60,7 +60,11 @@ The PavingStones070 material (normal, roughness, albedo, AO; see
 iterations, learning rate annealed over the second half, per-weight finite
 differences for the decoder over the last quarter. 8-bit latent: 2.64 bpp
 total, 0.66 bpp per texture. Left is the target, right the reconstruction
-from the quantized latent (`out_m1234/`).
+from the quantized latent (`out_m1234/`). The training command was
+
+```
+ntc m1.png m2.png m3.png m4.png --latent 128 128 4 --latent2 64 64 4 --mlp 36,36 --mlp-pairs 64 --iters 3000 --lr-anneal 0.5 0.05 --mlp-fd 0.75 --out out_m1234
+```
 
 | Normal map, 23.2 dB |
 |---|
