@@ -183,10 +183,11 @@ textures of a material are cropped identically and must match afterwards.
 
 ## Prior art disclosure
 
-Published September 3, 2026 (blog post above and this repository); updated
-September 4, 2026 with the two-level latent, materials, and the items marked
-as such. The following are disclosed
-here as public prior art.
+The blog post above and the single-texture results (the original repository,
+[richgel999/neural_texture_es](https://github.com/richgel999/neural_texture_es))
+were published on September 3, 2026. This repository, including the two-level latent, materials,
+and the items marked "added September 4", was published on September 4, 2026.
+The following are disclosed here as public prior art.
 
 Neural texture representations using learned latent grids with small neural
 decoders, and Evolution Strategies / simultaneous-perturbation methods for
