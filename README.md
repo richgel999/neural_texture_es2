@@ -307,6 +307,21 @@ Described, not yet implemented:
   model, as warm starts for ES training.
 * **Materials with non-RGB channel counts** (single-channel roughness or AO,
   two-channel normals) and normal-map-aware losses.
+* **SPSA (Simultaneous Perturbation Stochastic Approximation) and Rademacher
+  ES in place of Gaussian ES:** Spall's SPSA perturbs every parameter by a
+  random ±1 (Rademacher) step of size `c`, evaluates the two sides
+  `L± = L(θ ± cΔ)`, and estimates each component as
+  `ĝ_j = (L₊ − L₋) / (2c·Δ_j)`. Because `Δ_j = ±1`, `1/Δ_j = Δ_j`, so this is
+  `(L₊ − L₋)·Δ_j / (2c)`: exactly the antithetic ES estimator used here with
+  a ±1 direction instead of a Gaussian one, classically with a single pair
+  per update. Two evaluations estimate the whole gradient regardless of
+  parameter count, and the perturbation packs as one bit per parameter. It
+  plugs into the footprint attribution unchanged, since the per-texel loss
+  differences do not depend on the perturbation distribution, and the local
+  credit assignment should make it far less noisy than global SPSA. The
+  planned experiment is antithetic Rademacher perturbations plus the
+  footprint attribution, for the latent and for the decoder, benchmarked
+  against the Gaussian ES used now.
 * Learned interpolation kernels expressed as a few global parameters rather
   than as decoder inputs.
 
